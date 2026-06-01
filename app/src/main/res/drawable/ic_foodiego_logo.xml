@@ -1,0 +1,51 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#FF4F3C"
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0"/>
+        
+    <!-- Outer Glow Rim -->
+    <path
+        android:strokeColor="#FFB300"
+        android:strokeWidth="2"
+        android:pathData="M50,50m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0"/>
+
+    <!-- Steam Waves -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M42,28 Q45,22 42,16 M50,28 Q53,20 50,16 M58,28 Q61,22 58,16"/>
+
+    <!-- Cloche (Cover Plate) Lid -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,50 C25,35 36,32 50,32 C64,32 75,35 75,50 Z"/>
+
+    <!-- Cloche Handle -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M47,30a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"/>
+
+    <!-- Serving Platter Tray Base -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M20,53 L80,53 C82,53 83,54.5 83,56 C83,57.5 82,58 80,58 L20,58 C18,58 17,57.5 17,56 C17,54.5 18,53 20,53 Z"/>
+
+    <!-- Motion Lines (Fast Delivery indicator) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M15,66 L35,66 M22,74 L42,74 M30,82 L50,82"/>
+        
+    <!-- Accent Star -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M72,70 L74,75 L79,76 L75,80 L76,85 L72,82 L68,85 L69,80 L65,76 L70,75 Z"/>
+</vector>

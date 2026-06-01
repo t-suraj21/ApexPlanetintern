@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">FoodieGo</string>
+    <string name="tagline">Delicious food, delivered fast!</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="login_to_continue">Log in to order your favorite meal</string>
+    <string name="email_hint">Email Address</string>
+    <string name="password_hint">Password</string>
+    <string name="login_btn">Log In</string>
+    <string name="dont_have_account">Don\'t have an account? </string>
+    <string name="register_here">Register here</string>
+    
+    <!-- Register Screen -->
+    <string name="create_account">Create Account</string>
+    <string name="register_to_start">Sign up to get started</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="register_btn">Register</string>
+    <string name="already_have_account">Already have an account? </string>
+    <string name="login_here">Login here</string>
+</resources>
