@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:strokeColor="@color/grayBorder"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Image Container with Rounded Corners -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCartImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/imgCartFood"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Cart Food Image"
+                tools:src="@android:color/darker_gray" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Food Name -->
+        <TextView
+            android:id="@+id/txtCartFoodName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Cheese Burger"
+            android:textColor="@color/textDark"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cardCartImage"
+            app:layout_constraintEnd_toStartOf="@id/layoutQuantityControls" />
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/txtCartFoodPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="₹149"
+            android:textColor="@color/primaryColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintTop_toBottomOf="@id/txtCartFoodName"
+            app:layout_constraintStart_toEndOf="@id/cardCartImage"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Quantity Adjuster Controls -->
+        <LinearLayout
+            android:id="@+id/layoutQuantityControls"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_search_bar"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Minus Button -->
+            <TextView
+                android:id="@+id/btnCartMinus"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="-"
+                android:textColor="@color/primaryColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Current Count -->
+            <TextView
+                android:id="@+id/txtCartQuantity"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:textColor="@color/textDark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-bold"
+                android:gravity="center" />
+
+            <!-- Plus Button -->
+            <TextView
+                android:id="@+id/btnCartPlus"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="+"
+                android:textColor="@color/primaryColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

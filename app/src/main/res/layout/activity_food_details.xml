@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgLight"
+    tools:context=".activities.FoodDetailsActivity">
+
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layoutBottomBar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Large Header Image -->
+            <ImageView
+                android:id="@+id/imgDetailsFood"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="Food Detail Image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@android:color/darker_gray" />
+
+            <!-- Back Arrow Overlay -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnDetailsBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="←"
+                    android:textColor="@color/textDark"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Details Content Sheet Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="-24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:layout_constraintTop_toBottomOf="@id/imgDetailsFood"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Title & Price Line -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="top">
+
+                        <TextView
+                            android:id="@+id/txtDetailsName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Pizza Margherita"
+                            android:textColor="@color/textDark"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-black" />
+
+                        <TextView
+                            android:id="@+id/txtDetailsPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹199"
+                            android:textColor="@color/primaryColor"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-black"
+                            android:layout_marginStart="16dp" />
+
+                    </LinearLayout>
+
+                    <!-- Rating & Delivery Time Badge Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical">
+
+                        <!-- Rating Badge -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="#4CAF50"
+                            app:strokeWidth="0dp">
+
+                            <TextView
+                                android:id="@+id/txtDetailsRating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:text="★ 4.5"
+                                android:textColor="@color/white"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Delivery Time Indicator -->
+                        <TextView
+                            android:id="@+id/txtDetailsDeliveryTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="⏱ 25 mins"
+                            android:textColor="@color/textGray"
+                            android:textSize="13sp"
+                            android:fontFamily="sans-serif-medium" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/grayBorder" />
+
+                    <!-- Description Heading -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="About this meal"
+                        android:textColor="@color/textDark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-bold" />
+
+                    <!-- Description Body -->
+                    <TextView
+                        android:id="@+id/txtDetailsDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Classic mozzarella cheese combined with fresh visual basil leaves, extra virgin olive oil, and our delicious slow-simmered house marinara sauce baked on a stone crust."
+                        android:textColor="@color/textGray"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp"
+                        android:fontFamily="sans-serif" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/grayBorder" />
+
+                    <!-- Quantity Picker Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Select Quantity"
+                            android:textColor="@color/textDark"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:background="@drawable/bg_search_bar"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp">
+
+                            <!-- Minus -->
+                            <TextView
+                                android:id="@+id/btnDetailsMinus"
+                                android:layout_width="32dp"
+                                android:layout_height="match_parent"
+                                android:text="-"
+                                android:textColor="@color/primaryColor"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <!-- Count -->
+                            <TextView
+                                android:id="@+id/txtDetailsQuantity"
+                                android:layout_width="32dp"
+                                android:layout_height="match_parent"
+                                android:text="1"
+                                android:textColor="@color/textDark"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-bold"
+                                android:gravity="center" />
+
+                            <!-- Plus -->
+                            <TextView
+                                android:id="@+id/btnDetailsPlus"
+                                android:layout_width="32dp"
+                                android:layout_height="match_parent"
+                                android:text="+"
+                                android:textColor="@color/primaryColor"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating bottom bar for Add to Cart -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDetailsAddToCart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Add to Cart"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/primaryColor"
+            app:cornerRadius="14dp"
+            app:rippleColor="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

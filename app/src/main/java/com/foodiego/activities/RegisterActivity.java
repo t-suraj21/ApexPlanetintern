@@ -1,22 +1,30 @@
 package com.foodiego.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.foodiego.R;
 import com.foodiego.databinding.ActivityRegisterBinding;
+import com.foodiego.models.AuthResponse;
+import com.foodiego.network.Repository;
+import com.foodiego.utils.SessionManager;
 
 /**
  * Register Screen Activity.
- * Handles account creation, conducts form validations, and redirects users to Home on successful validation.
+ * Handles account registration validation, button touch animations, and slide transition behaviors.
  */
 public class RegisterActivity extends AppCompatActivity {
 
     private ActivityRegisterBinding binding;
+    private android.app.AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupListeners();
+        applyScaleAnimation(binding.btnRegister);
     }
 
     private void setupListeners() {
@@ -60,8 +69,8 @@ public class RegisterActivity extends AppCompatActivity {
         // Trigger Validation on Register click
         binding.btnRegister.setOnClickListener(v -> validateAndRegister());
 
-        // Redirect back to Login Screen (simply closes the Register activity, returning to the existing Login activity below it)
-        binding.txtLoginLink.setOnClickListener(v -> finish());
+        // Redirect back to Login Screen with slide animations
+        binding.txtLoginLink.setOnClickListener(v -> finishAndSlide());
     }
 
     private void validateAndRegister() {
@@ -118,20 +127,84 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Action on Successful Validation
         if (isValid) {
-            Toast.makeText(this, "Registration Successful! Welcome, " + fullName, Toast.LENGTH_SHORT).show();
-            
-            // Navigate directly to Home dashboard
-            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-            startActivity(intent);
-            
-            // Clear current stack so that back press exits the app
-            finishAffinity();
+            showLoading("Creating account...");
+            Repository.getInstance().register(fullName, email, password, new Repository.ApiCallback<AuthResponse>() {
+                @Override
+                public void onSuccess(AuthResponse result) {
+                    hideLoading();
+                    if (result != null && result.getUser() != null) {
+                        Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+                        
+                        // Save login session locally
+                        SessionManager.getInstance(RegisterActivity.this).createLoginSession(result.getUser());
+
+                        // Navigate directly to Home dashboard
+                        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                        
+                        // Clear current stack so that back press exits the app
+                        finishAffinity();
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Registration failed. Stored profile mismatch.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    hideLoading();
+                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
+    private void showLoading(String message) {
+        if (progressDialog == null) {
+            android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
+            progressBar.setPadding(40, 40, 40, 40);
+            progressDialog = new android.app.AlertDialog.Builder(this)
+                    .setView(progressBar)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .create();
+        }
+        progressDialog.setMessage(message);
+        progressDialog.show();
+    }
+
+    private void hideLoading() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    private void finishAndSlide() {
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
     /**
-     * Helper TextWatcher to shorten boilerplate
+     * Programmatic touch-scale micro-animation for buttons.
      */
+    @SuppressLint("ClickableViewAccessibility")
+    private void applyScaleAnimation(View view) {
+        view.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80).start();
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(80).start();
+            }
+            return false;
+        });
+    }
+
     private abstract static class SimpleTextWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

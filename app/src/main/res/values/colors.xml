@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Palette (Coral/Orange Food Theme) -->
-    <color name="primaryColor">#FF4F3C</color>
-    <color name="primaryDarkColor">#E63925</color>
-    <color name="primaryLightColor">#FF8677</color>
-    <color name="secondaryColor">#FFB300</color>
-    <color name="secondaryDarkColor">#C68400</color>
-    <color name="secondaryLightColor">#FFE54C</color>
+    <!-- Task 2 Color Tokens (Premium Food Delivery Theme) -->
+    <color name="primaryColor">#FF6B35</color>
+    <color name="primaryDarkColor">#E85A23</color>
+    <color name="primaryLightColor">#FFA07A</color>
+    <color name="secondaryColor">#FF9F1C</color>
+    <color name="secondaryDarkColor">#E08400</color>
+    <color name="secondaryLightColor">#FFBF69</color>
     
-    <!-- UI Element Tints & Backgrounds -->
+    <!-- UI Layout Color Tints -->
     <color name="bgLight">#F8F9FA</color>
     <color name="bgCard">#FFFFFF</color>
-    <color name="textDark">#1E2022</color>
-    <color name="textGray">#7E8085</color>
-    <color name="accentLight">#FFF0EE</color>
-    <color name="accentLightSelected">#FFE0DB</color>
-    <color name="grayBorder">#EAEAEA</color>
+    <color name="textDark">#212529</color>
+    <color name="textGray">#6C757D</color>
+    <color name="accentRed">#FF4D4D</color>
+    
+    <!-- Selections & Interactive Tints -->
+    <color name="accentLight">#FFF0EB</color>
+    <color name="accentLightSelected">#FFE1D6</color>
+    <color name="grayBorder">#E9ECEF</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="red_validation">#D32F2F</color>
+    <color name="red_validation">#DC3545</color>
 </resources>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgLight">
+
+    <!-- Custom Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarProfile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryColor"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="16dp"
+            tools:ignore="RtlSymmetry">
+
+            <!-- Back Arrow -->
+            <TextView
+                android:id="@+id/btnProfileBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="←"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="My Profile"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnProfileBack" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbarProfile"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <!-- Profile Image Container -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutProfileImage"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="2dp"
+                    android:scaleType="centerCrop"
+                    app:strokeColor="@color/primaryColor"
+                    app:strokeWidth="3dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                    android:src="@drawable/ic_foodiego_logo" />
+
+                <!-- Floating Edit Pencil Button -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnEditPhoto"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_edit"
+                        android:contentDescription="Edit Photo" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Loading Indicator for Image Uploading -->
+            <ProgressBar
+                android:id="@+id/progressImageUpload"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/primaryColor"
+                app:layout_constraintTop_toBottomOf="@id/layoutProfileImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp" />
+
+            <!-- Input Fields Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProfileDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/grayBorder"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutProfileImage">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Name Outlined Field -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilProfileName"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Full Name"
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:hintTextColor="@color/primaryColor"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etProfileName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/textDark"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Email Outlined Field (Read Only) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilProfileEmail"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:hint="Email Address"
+                        app:boxStrokeColor="@color/textGray"
+                        app:hintTextColor="@color/textGray"
+                        android:enabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etProfileEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/textGray"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Save Profile Action Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="20dp"
+                        android:text="Save Changes"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        android:backgroundTint="@color/primaryColor"
+                        app:rippleColor="@color/white" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Logout Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/grayBorder"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toBottomOf="@id/cardProfileDetails"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/layoutLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_logout"
+                        android:contentDescription="Logout" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Sign Out Account"
+                        android:textColor="@color/accentRed"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="→"
+                        android:textColor="@color/accentRed"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Global Fullscreen Loader Overlay -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutProfileLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:elevation="10dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp">
+
+                <ProgressBar
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:indeterminateTint="@color/primaryColor" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Saving details..."
+                    android:textColor="@color/textDark"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@color/white"
+        app:elevation="12dp"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

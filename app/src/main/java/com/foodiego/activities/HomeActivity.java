@@ -1,26 +1,37 @@
 package com.foodiego.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.foodiego.R;
 import com.foodiego.adapters.CategoryAdapter;
-import com.foodiego.adapters.FoodAdapter;
+import com.foodiego.adapters.PopularFoodAdapter;
+import com.foodiego.adapters.RecommendedFoodAdapter;
 import com.foodiego.databinding.ActivityHomeBinding;
+import com.foodiego.models.Category;
 import com.foodiego.models.Food;
+import com.foodiego.models.User;
+import com.foodiego.network.Repository;
+import com.foodiego.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Home Screen Dashboard Activity.
- * Displays custom toolbar, horizontal categories list, and a vertical list of popular food items loaded from a dummy repository.
+ * Displays Categories list, Popular Foods horizontal list, and Recommended Foods vertical list.
  */
 public class HomeActivity extends AppCompatActivity {
 
     private ActivityHomeBinding binding;
+    private List<Food> fullFoodList = new ArrayList<>();
+    private PopularFoodAdapter popularAdapter;
+    private RecommendedFoodAdapter recommendedAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,106 +40,122 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupToolbar();
-        setupCategoriesRecyclerView();
-        setupPopularFoodsRecyclerView();
+        setupRecyclerViews(); // Initialize with empty adapters
+        setupBottomNavigation();
+        fetchFoodData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+        loadUserProfile();
     }
 
     private void setupToolbar() {
-        // Toolbar Profile Action Click Handler
-        binding.imgToolbarProfile.setOnClickListener(v -> 
-            Toast.makeText(this, "Profile Settings - Coming Soon!", Toast.LENGTH_SHORT).show()
-        );
-
-        // Logo Click Handler
-        binding.imgToolbarLogo.setOnClickListener(v -> 
-            Toast.makeText(this, "FoodieGo - Your Food Partner", Toast.LENGTH_SHORT).show()
-        );
+        binding.imgToolbarProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
     }
 
-    private void setupCategoriesRecyclerView() {
-        List<CategoryAdapter.Category> categories = new ArrayList<>();
-        categories.add(new CategoryAdapter.Category("Pizza", R.drawable.ic_pizza));
-        categories.add(new CategoryAdapter.Category("Burger", R.drawable.ic_burger));
-        categories.add(new CategoryAdapter.Category("Pasta", R.drawable.ic_pasta));
-        categories.add(new CategoryAdapter.Category("Sandwich", R.drawable.ic_sandwich));
-        categories.add(new CategoryAdapter.Category("Drinks", R.drawable.ic_drinks));
-        categories.add(new CategoryAdapter.Category("Dessert", R.drawable.ic_dessert));
+    private void loadUserProfile() {
+        User user = SessionManager.getInstance(this).getUserDetails();
+        if (user != null) {
+            String name = user.getName();
+            if (name != null && !name.isEmpty()) {
+                binding.txtGreeting.setText("Hello, " + name.split(" ")[0] + " 👋");
+            }
+            if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+                Glide.with(HomeActivity.this)
+                        .load(user.getProfileImage())
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .circleCrop()
+                        .into(binding.imgToolbarProfile);
+            }
+        }
+    }
 
-        CategoryAdapter categoryAdapter = new CategoryAdapter(categories, category -> 
-            Toast.makeText(this, "Selected Category: " + category.getName(), Toast.LENGTH_SHORT).show()
-        );
+    private void setupRecyclerViews() {
+        // Categories
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("Pizza", R.drawable.ic_pizza));
+        categories.add(new Category("Burger", R.drawable.ic_burger));
+        categories.add(new Category("Pasta", R.drawable.ic_pasta));
+        categories.add(new Category("Sandwich", R.drawable.ic_sandwich));
+        categories.add(new Category("Drinks", R.drawable.ic_drinks));
+        categories.add(new Category("Desserts", R.drawable.ic_dessert));
 
         binding.rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.rvCategories.setAdapter(categoryAdapter);
+        binding.rvCategories.setAdapter(new CategoryAdapter(categories, cat -> filterFoods(cat.getName())));
+
+        // Popular Foods (Empty initially)
+        popularAdapter = new PopularFoodAdapter(new ArrayList<>());
+        binding.rvPopularFoods.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvPopularFoods.setAdapter(popularAdapter);
+
+        // Recommended Foods (Empty initially)
+        recommendedAdapter = new RecommendedFoodAdapter(new ArrayList<>());
+        binding.rvRecommendedFoods.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvRecommendedFoods.setAdapter(recommendedAdapter);
     }
 
-    private void setupPopularFoodsRecyclerView() {
-        List<Food> popularFoods = new ArrayList<>();
-        
-        // 10 Detailed Premium Dummy Food Items
-        popularFoods.add(new Food(
-                "Pizza Margherita",
-                "Classic mozzarella, fresh basil, olive oil, and house marinara sauce.",
-                "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?q=80&w=600&auto=format&fit=crop",
-                "₹199"
-        ));
-        popularFoods.add(new Food(
-                "Cheese Burger",
-                "Double-layered prime beef patty, cheddar cheese, fresh veggies, and secret house sauce.",
-                "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop",
-                "₹149"
-        ));
-        popularFoods.add(new Food(
-                "White Sauce Pasta",
-                "Penne pasta tossed in rich, creamy parmesan cheese sauce with sauteed garlic mushrooms.",
-                "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?q=80&w=600&auto=format&fit=crop",
-                "₹249"
-        ));
-        popularFoods.add(new Food(
-                "Veggie Club Sandwich",
-                "Triple decker toasted sandwich loaded with fresh cucumber, tomatoes, lettuce, and premium cheddar.",
-                "https://images.unsplash.com/photo-1525351484163-7529414344d8?q=80&w=600&auto=format&fit=crop",
-                "₹119"
-        ));
-        popularFoods.add(new Food(
-                "Caramel Macchiato",
-                "Rich espresso combined with milk and sweet vanilla syrup, finished with a caramel drizzle.",
-                "https://images.unsplash.com/photo-1572286258217-40142c1c6a70?q=80&w=600&auto=format&fit=crop",
-                "₹179"
-        ));
-        popularFoods.add(new Food(
-                "Double Chocolate Muffin",
-                "Rich, moist chocolate muffin filled with premium Belgian dark chocolate chips.",
-                "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?q=80&w=600&auto=format&fit=crop",
-                "₹99"
-        ));
-        popularFoods.add(new Food(
-                "Paneer Tikka Wrap",
-                "Grilled spicy cottage cheese cubes wrapped in a soft tortilla wrap with crisp onions and mint mayo.",
-                "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?q=80&w=600&auto=format&fit=crop",
-                "₹159"
-        ));
-        popularFoods.add(new Food(
-                "Garlic Bread with Cheese",
-                "Crispy freshly baked artisanal baguette slices topped with garlic herb butter and melted mozzarella.",
-                "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?q=80&w=600&auto=format&fit=crop",
-                "₹129"
-        ));
-        popularFoods.add(new Food(
-                "Chocolate Lava Cake",
-                "Hot chocolate soufflé cake with a rich and gooey molten Belgian chocolate center.",
-                "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop",
-                "₹139"
-        ));
-        popularFoods.add(new Food(
-                "Tropical Mango Smoothie",
-                "A creamy and refreshing tropical blend of sweet Alphonso mangoes, fresh banana, and Greek yogurt.",
-                "https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=600&auto=format&fit=crop",
-                "₹149"
-        ));
+    private void fetchFoodData() {
+        binding.layoutHomeLoading.setVisibility(View.VISIBLE);
+        Repository.getInstance().getFoods(new Repository.ApiCallback<List<Food>>() {
+            @Override
+            public void onSuccess(List<Food> result) {
+                binding.layoutHomeLoading.setVisibility(View.GONE);
+                if (result == null || result.isEmpty()) return;
+                
+                fullFoodList = result;
 
-        FoodAdapter foodAdapter = new FoodAdapter(popularFoods);
-        binding.rvPopularFoods.setLayoutManager(new LinearLayoutManager(this));
-        binding.rvPopularFoods.setAdapter(foodAdapter);
+                // Update Popular
+                List<Food> popularFoods = new ArrayList<>(result.subList(0, Math.min(5, result.size())));
+                popularAdapter = new PopularFoodAdapter(popularFoods);
+                binding.rvPopularFoods.setAdapter(popularAdapter);
+
+                // Update Recommended
+                recommendedAdapter = new RecommendedFoodAdapter(result);
+                binding.rvRecommendedFoods.setAdapter(recommendedAdapter);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                binding.layoutHomeLoading.setVisibility(View.GONE);
+                Toast.makeText(HomeActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void filterFoods(String categoryName) {
+        if (fullFoodList.isEmpty()) return;
+        List<Food> filtered = new ArrayList<>();
+        for (Food f : fullFoodList) {
+            if (f.getName().toLowerCase().contains(categoryName.toLowerCase())) filtered.add(f);
+        }
+        binding.rvRecommendedFoods.setAdapter(new RecommendedFoodAdapter(filtered.isEmpty() ? fullFoodList : filtered));
+    }
+
+    private void setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) return true;
+            
+            Intent intent = null;
+            if (itemId == R.id.nav_cart) intent = new Intent(this, CartActivity.class);
+            else if (itemId == R.id.nav_orders) intent = new Intent(this, OrdersActivity.class);
+            else if (itemId == R.id.nav_profile) intent = new Intent(this, ProfileActivity.class);
+            
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
     }
 }

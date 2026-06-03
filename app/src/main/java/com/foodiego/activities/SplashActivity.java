@@ -34,7 +34,12 @@ public class SplashActivity extends AppCompatActivity {
 
         // Transition timer handler
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            Intent intent;
+            if (com.foodiego.utils.SessionManager.getInstance(SplashActivity.this).isLoggedIn()) {
+                intent = new Intent(SplashActivity.this, HomeActivity.class);
+            } else {
+                intent = new Intent(SplashActivity.this, LoginActivity.class);
+            }
             startActivity(intent);
             finish(); // Finish current activity so the user cannot navigate back to Splash
         }, SPLASH_DELAY);

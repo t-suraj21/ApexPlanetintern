@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.foodiego.R;
 import com.foodiego.databinding.ItemCategoryBinding;
+import com.foodiego.models.Category;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private final List<Category> categoryList;
-    private int selectedPosition = 0; // Default: first category is active
+    private int selectedPosition = 0; // Default: first category active
     private final OnCategoryClickListener listener;
 
     public interface OnCategoryClickListener {
@@ -61,14 +62,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
             boolean isSelected = (position == selectedPosition);
 
-            // Dynamic Styling based on Selection State
+            // Dynamic Styling based on Selection State (Material 3 Upgraded)
             if (isSelected) {
                 // Highlighted / Selected State
                 binding.cardCategory.setStrokeColor(ContextCompat.getColor(itemView.getContext(), R.color.primaryColor));
                 binding.cardCategory.setStrokeWidth(4);
                 binding.cardCategory.setCardElevation(6);
                 
-                binding.layoutIconContainer.setBackgroundResource(R.drawable.bg_splash_gradient);
+                binding.layoutIconContainer.setBackgroundResource(R.drawable.bg_button_gradient);
                 binding.imgCategoryIcon.setColorFilter(ContextCompat.getColor(itemView.getContext(), R.color.white));
                 binding.txtCategoryName.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.primaryColor));
             } else {
@@ -82,7 +83,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 binding.txtCategoryName.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.textDark));
             }
 
-            // Click listener
+            // Click handler
             itemView.setOnClickListener(v -> {
                 int previousSelected = selectedPosition;
                 selectedPosition = getAdapterPosition();
@@ -95,27 +96,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                     listener.onCategoryClick(category);
                 }
             });
-        }
-    }
-
-    /**
-     * Category Class Helper inside Adapter
-     */
-    public static class Category {
-        private final String name;
-        private final int iconResId;
-
-        public Category(String name, int iconResId) {
-            this.name = name;
-            this.iconResId = iconResId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getIconResId() {
-            return iconResId;
         }
     }
 }
