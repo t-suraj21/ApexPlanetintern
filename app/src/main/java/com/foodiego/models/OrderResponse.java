@@ -1,39 +1,25 @@
 package com.foodiego.models;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * REST API response mapping historical order listings.
+ * Response model for order placement.
  */
-public class OrderResponse {
-    private String status;
-    private String message;
-    private List<Order> orders;
+public class OrderResponse implements Serializable {
+    private String orderId;
 
     public OrderResponse() {
     }
 
-    public String getStatus() {
-        return status;
+    public OrderResponse(String orderId) {
+        this.orderId = orderId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

@@ -27,4 +27,9 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/primaryDarkColor</item>
     </style>
+
+    <!-- Active Indicator style for BottomNavigationView -->
+    <style name="App.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/accentLight</item>
+    </style>
 </resources>

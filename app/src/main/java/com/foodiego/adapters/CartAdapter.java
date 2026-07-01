@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Adapter for the Cart Items RecyclerView.
+ * Utilizes dynamic getAdapterPosition() for crash-free item updates and removals.
  */
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
@@ -41,7 +42,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        holder.bind(cartItemList.get(position), position);
+        holder.bind(cartItemList.get(position));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             this.binding = binding;
         }
 
-        public void bind(CartItem cartItem, int position) {
+        public void bind(CartItem cartItem) {
             binding.txtCartFoodName.setText(cartItem.getFood().getName());
             binding.txtCartFoodPrice.setText(cartItem.getFood().getPrice());
             binding.txtCartQuantity.setText(String.valueOf(cartItem.getQuantity()));
@@ -75,10 +76,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             // Plus Action Click Handler
             binding.btnCartPlus.setOnClickListener(v -> {
-                int currentQty = cartItem.getQuantity();
-                cartItem.setQuantity(currentQty + 1);
-                binding.txtCartQuantity.setText(String.valueOf(cartItem.getQuantity()));
-                
+                int adapterPos = getAdapterPosition();
+                if (adapterPos == RecyclerView.NO_POSITION) return;
+
+                CartItem item = cartItemList.get(adapterPos);
+                int currentQty = item.getQuantity();
+                item.setQuantity(currentQty + 1);
+                binding.txtCartQuantity.setText(String.valueOf(item.getQuantity()));
+
                 if (quantityChangeListener != null) {
                     quantityChangeListener.onQuantityChanged(cartItemList);
                 }
@@ -86,15 +91,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             // Minus Action Click Handler
             binding.btnCartMinus.setOnClickListener(v -> {
-                int currentQty = cartItem.getQuantity();
+                int adapterPos = getAdapterPosition();
+                if (adapterPos == RecyclerView.NO_POSITION) return;
+
+                CartItem item = cartItemList.get(adapterPos);
+                int currentQty = item.getQuantity();
                 if (currentQty > 1) {
-                    cartItem.setQuantity(currentQty - 1);
-                    binding.txtCartQuantity.setText(String.valueOf(cartItem.getQuantity()));
+                    item.setQuantity(currentQty - 1);
+                    binding.txtCartQuantity.setText(String.valueOf(item.getQuantity()));
                 } else {
                     // Qty is 1, remove item from cart
-                    cartItemList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, cartItemList.size());
+                    cartItemList.remove(adapterPos);
+                    notifyItemRemoved(adapterPos);
+                    notifyItemRangeChanged(adapterPos, cartItemList.size());
                 }
 
                 if (quantityChangeListener != null) {

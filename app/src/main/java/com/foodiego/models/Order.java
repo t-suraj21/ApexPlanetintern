@@ -3,9 +3,6 @@ package com.foodiego.models;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Data Model representing a Checkout Order record.
- */
 public class Order implements Serializable {
     private String orderId;
     private String userId;
@@ -42,7 +39,7 @@ public class Order implements Serializable {
         this.userId = userId;
     }
 
-    public List<CartItem> getItems() {
+    public List<CartItem> items() {
         return items;
     }
 
@@ -72,5 +69,9 @@ public class Order implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<CartItem> getItems() {
+        return items;
     }
 }

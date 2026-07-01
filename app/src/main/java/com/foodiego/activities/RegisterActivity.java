@@ -13,14 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.foodiego.R;
 import com.foodiego.databinding.ActivityRegisterBinding;
-import com.foodiego.models.AuthResponse;
+import com.foodiego.models.User;
 import com.foodiego.network.Repository;
 import com.foodiego.utils.SessionManager;
 
-/**
- * Register Screen Activity.
- * Handles account registration validation, button touch animations, and slide transition behaviors.
- */
 public class RegisterActivity extends AppCompatActivity {
 
     private ActivityRegisterBinding binding;
@@ -37,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Clear errors proactively as the user types
         binding.etFullName.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -66,97 +61,50 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // Trigger Validation on Register click
         binding.btnRegister.setOnClickListener(v -> validateAndRegister());
-
-        // Redirect back to Login Screen with slide animations
         binding.txtLoginLink.setOnClickListener(v -> finishAndSlide());
     }
 
     private void validateAndRegister() {
-        String fullName = binding.etFullName.getText() != null ? binding.etFullName.getText().toString().trim() : "";
-        String email = binding.etRegisterEmail.getText() != null ? binding.etRegisterEmail.getText().toString().trim() : "";
-        String password = binding.etRegisterPassword.getText() != null ? binding.etRegisterPassword.getText().toString().trim() : "";
-        String confirmPassword = binding.etConfirmPassword.getText() != null ? binding.etConfirmPassword.getText().toString().trim() : "";
+        String fullName = binding.etFullName.getText().toString().trim();
+        String email = binding.etRegisterEmail.getText().toString().trim();
+        String password = binding.etRegisterPassword.getText().toString().trim();
+        String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
 
-        boolean isValid = true;
-
-        // Full Name Validation
         if (fullName.isEmpty()) {
             binding.tilFullName.setError("Full name is required!");
-            isValid = false;
-        } else if (fullName.length() < 3) {
-            binding.tilFullName.setError("Name must contain at least 3 characters!");
-            isValid = false;
-        } else {
-            binding.tilFullName.setError(null);
+            return;
         }
-
-        // Email Validation
-        if (email.isEmpty()) {
-            binding.tilRegisterEmail.setError("Email address is required!");
-            isValid = false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilRegisterEmail.setError("Please enter a valid email address!");
-            isValid = false;
-        } else {
-            binding.tilRegisterEmail.setError(null);
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilRegisterEmail.setError("Valid email is required!");
+            return;
         }
-
-        // Password Validation
-        if (password.isEmpty()) {
-            binding.tilRegisterPassword.setError("Password is required!");
-            isValid = false;
-        } else if (password.length() < 6) {
-            binding.tilRegisterPassword.setError("Password must contain at least 6 characters!");
-            isValid = false;
-        } else {
-            binding.tilRegisterPassword.setError(null);
+        if (password.length() < 6) {
+            binding.tilRegisterPassword.setError("Password must be at least 6 characters!");
+            return;
         }
-
-        // Confirm Password Validation
-        if (confirmPassword.isEmpty()) {
-            binding.tilConfirmPassword.setError("Please confirm your password!");
-            isValid = false;
-        } else if (!confirmPassword.equals(password)) {
+        if (!password.equals(confirmPassword)) {
             binding.tilConfirmPassword.setError("Passwords do not match!");
-            isValid = false;
-        } else {
-            binding.tilConfirmPassword.setError(null);
+            return;
         }
 
-        // Action on Successful Validation
-        if (isValid) {
-            showLoading("Creating account...");
-            Repository.getInstance().register(fullName, email, password, new Repository.ApiCallback<AuthResponse>() {
-                @Override
-                public void onSuccess(AuthResponse result) {
-                    hideLoading();
-                    if (result != null && result.getUser() != null) {
-                        Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                        
-                        // Save login session locally
-                        SessionManager.getInstance(RegisterActivity.this).createLoginSession(result.getUser());
+        showLoading("Creating account...");
+        Repository.getInstance().registerUser(fullName, email, password, new Repository.ApiCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+                hideLoading();
+                SessionManager.getInstance(RegisterActivity.this).createLoginSession(user);
+                Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+                finishAffinity();
+            }
 
-                        // Navigate directly to Home dashboard
-                        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-                        startActivity(intent);
-                        
-                        // Clear current stack so that back press exits the app
-                        finishAffinity();
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Registration failed. Stored profile mismatch.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(String errorMessage) {
-                    hideLoading();
-                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                hideLoading();
+                Toast.makeText(RegisterActivity.this, "Registration failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showLoading(String message) {
@@ -179,20 +127,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
     private void finishAndSlide() {
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    /**
-     * Programmatic touch-scale micro-animation for buttons.
-     */
     @SuppressLint("ClickableViewAccessibility")
     private void applyScaleAnimation(View view) {
         view.setOnTouchListener((v, event) -> {
@@ -208,10 +147,8 @@ public class RegisterActivity extends AppCompatActivity {
     private abstract static class SimpleTextWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
         @Override
         public abstract void onTextChanged(CharSequence s, int start, int before, int count);
-
         @Override
         public void afterTextChanged(Editable s) {}
     }

@@ -25,6 +25,7 @@ import java.util.List;
 
 /**
  * Adapter for the Horizontal Popular Foods RecyclerView.
+ * Integrated with REST API for cart operations.
  */
 public class PopularFoodAdapter extends RecyclerView.Adapter<PopularFoodAdapter.PopularViewHolder> {
 
@@ -68,7 +69,6 @@ public class PopularFoodAdapter extends RecyclerView.Adapter<PopularFoodAdapter.
 
             Context context = itemView.getContext();
 
-            // Glide Premium Image Loader
             Glide.with(context)
                     .load(food.getImageUrl())
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -77,7 +77,6 @@ public class PopularFoodAdapter extends RecyclerView.Adapter<PopularFoodAdapter.
                     .centerCrop()
                     .into(binding.imgPopularFood);
 
-            // Add Button Clicks
             binding.btnPopularAdd.setOnClickListener(v -> {
                 String userId = SessionManager.getInstance(context).getUserId();
                 if (userId == null) {
@@ -87,23 +86,23 @@ public class PopularFoodAdapter extends RecyclerView.Adapter<PopularFoodAdapter.
 
                 binding.btnPopularAdd.setEnabled(false);
 
-                // Fetch current cart list from MySQL REST API, increment, and sync
                 Repository.getInstance().getCart(userId, new Repository.ApiCallback<List<CartItem>>() {
                     @Override
                     public void onSuccess(List<CartItem> result) {
                         boolean exists = false;
-                        for (CartItem item : result) {
-                            if (item.getFood().getId() != null && item.getFood().getId().equalsIgnoreCase(food.getId())) {
+                        List<CartItem> cartList = result != null ? result : new ArrayList<>();
+                        for (CartItem item : cartList) {
+                            if (item.getFood() != null && item.getFood().getId() != null && item.getFood().getId().equalsIgnoreCase(food.getId())) {
                                 item.setQuantity(item.getQuantity() + 1);
                                 exists = true;
                                 break;
                             }
                         }
                         if (!exists) {
-                            result.add(new CartItem(food, 1));
+                            cartList.add(new CartItem(food, 1));
                         }
 
-                        Repository.getInstance().syncCart(userId, result, new Repository.ApiCallback<GenericResponse>() {
+                        Repository.getInstance().syncCart(userId, cartList, new Repository.ApiCallback<GenericResponse>() {
                             @Override
                             public void onSuccess(GenericResponse syncResult) {
                                 binding.btnPopularAdd.setEnabled(true);
@@ -113,34 +112,19 @@ public class PopularFoodAdapter extends RecyclerView.Adapter<PopularFoodAdapter.
                             @Override
                             public void onFailure(String errorMessage) {
                                 binding.btnPopularAdd.setEnabled(true);
-                                Toast.makeText(context, "Cart update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Error adding to cart: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        List<CartItem> newList = new ArrayList<>();
-                        newList.add(new CartItem(food, 1));
-                        
-                        Repository.getInstance().syncCart(userId, newList, new Repository.ApiCallback<GenericResponse>() {
-                            @Override
-                            public void onSuccess(GenericResponse syncResult) {
-                                binding.btnPopularAdd.setEnabled(true);
-                                Toast.makeText(context, food.getName() + " added to Cart!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFailure(String errorMessage) {
-                                binding.btnPopularAdd.setEnabled(true);
-                                Toast.makeText(context, "Failed to update Cart: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        binding.btnPopularAdd.setEnabled(true);
+                        Toast.makeText(context, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
             });
 
-            // Card item opens Details Screen with slide animations
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, FoodDetailsActivity.class);
                 intent.putExtra("food_item", food);

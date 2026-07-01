@@ -1,82 +1,59 @@
 package com.foodiego.network;
 
-import com.foodiego.models.AuthResponse;
-import com.foodiego.models.CartResponse;
+import com.foodiego.models.CartItem;
+import com.foodiego.models.Food;
 import com.foodiego.models.GenericResponse;
+import com.foodiego.models.Order;
 import com.foodiego.models.OrderResponse;
-import com.foodiego.models.ProductResponse;
+import com.foodiego.models.User;
 
-import java.util.Map;
-
+import java.util.List;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
-import retrofit2.http.Query;
+import retrofit2.http.Path;
 
 /**
- * Retrofit Interface defining server-side PHP API Endpoints.
+ * Retrofit Interface for FoodieGo custom Node.js/MongoDB API.
  */
 public interface ApiService {
 
-    @FormUrlEncoded
-    @POST("register.php")
-    Call<AuthResponse> register(
-            @Field("name") String name,
-            @Field("email") String email,
-            @Field("password") String password
-    );
+    @GET("api/products")
+    Call<List<Food>> getProducts();
 
-    @FormUrlEncoded
-    @POST("login.php")
-    Call<AuthResponse> login(
-            @Field("email") String email,
-            @Field("password") String password
-    );
+    @GET("api/products/{id}")
+    Call<Food> getProductById(@Path("id") String id);
 
-    @GET("get_products.php")
-    Call<ProductResponse> getProducts();
+    @POST("api/auth/register")
+    Call<User> registerUser(@Body User user);
 
-    @GET("cart.php")
-    Call<CartResponse> getCart(
-            @Query("user_id") String userId
-    );
+    @POST("api/auth/login")
+    Call<User> loginUser(@Body User user);
 
-    @POST("cart.php")
-    Call<GenericResponse> syncCart(
-            @Query("user_id") String userId,
-            @Body Map<String, Object> body
-    );
+    @GET("api/users/{userId}")
+    Call<User> getUserProfile(@Path("userId") String userId);
 
-    @FormUrlEncoded
-    @POST("place_order.php")
-    Call<GenericResponse> placeOrder(
-            @Field("user_id") String userId,
-            @Field("total_price") String totalPrice
-    );
-
-    @GET("get_orders.php")
-    Call<OrderResponse> getOrders(
-            @Query("user_id") String userId
-    );
-
-    @FormUrlEncoded
-    @POST("profile.php")
-    Call<GenericResponse> updateProfileName(
-            @Field("user_id") String userId,
-            @Field("name") String name
-    );
+    @PUT("api/users/{userId}")
+    Call<User> updateUserProfile(@Path("userId") String userId, @Body User user);
 
     @Multipart
-    @POST("upload_avatar.php")
-    Call<AuthResponse> uploadAvatar(
-            @Part("user_id") RequestBody userId,
-            @Part MultipartBody.Part image
-    );
+    @POST("api/users/{userId}/avatar")
+    Call<User> uploadProfileImage(@Path("userId") String userId, @Part MultipartBody.Part image);
+
+    @GET("api/cart/{userId}")
+    Call<List<CartItem>> getCartItems(@Path("userId") String userId);
+
+    @POST("api/cart/{userId}")
+    Call<GenericResponse> syncCart(@Path("userId") String userId, @Body CartSyncBody body);
+
+    @POST("api/orders")
+    Call<OrderResponse> placeOrder(@Body Order order);
+
+    @GET("api/orders/{userId}")
+    Call<List<Order>> getUserOrders(@Path("userId") String userId);
 }

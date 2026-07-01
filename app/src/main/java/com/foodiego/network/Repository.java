@@ -1,23 +1,19 @@
 package com.foodiego.network;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.foodiego.models.AuthResponse;
 import com.foodiego.models.CartItem;
-import com.foodiego.models.CartResponse;
 import com.foodiego.models.Food;
 import com.foodiego.models.GenericResponse;
 import com.foodiego.models.Order;
 import com.foodiego.models.OrderResponse;
-import com.foodiego.models.ProductDto;
-import com.foodiego.models.ProductResponse;
-
+import com.foodiego.models.User;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -27,7 +23,6 @@ import retrofit2.Response;
 
 /**
  * Repository pattern manager mediating REST API network queries.
- * Handles authentication, catalog, cart, and order operations with robust error handling.
  */
 public class Repository {
 
@@ -46,150 +41,193 @@ public class Repository {
         return instance;
     }
 
-    /**
-     * Standardized callback interface for UI communication.
-     */
     public interface ApiCallback<T> {
         void onSuccess(T result);
         void onFailure(String errorMessage);
     }
 
-    /**
-     * Common method to handle network-level failures.
-     */
     private void handleNetworkFailure(Throwable t, ApiCallback<?> callback) {
         Log.e(TAG, "Network Error: " + t.getMessage(), t);
         callback.onFailure("No internet connection or server offline");
     }
 
-    // --- Authentication ---
-
-    public void register(String name, String email, String password, ApiCallback<AuthResponse> callback) {
-        apiService.register(name, email, password).enqueue(new Callback<AuthResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    AuthResponse auth = response.body();
-                    if ("success".equalsIgnoreCase(auth.getStatus())) {
-                        callback.onSuccess(auth);
-                    } else {
-                        callback.onFailure(auth.getMessage() != null ? auth.getMessage() : "Registration failed.");
-                    }
-                } else {
-                    callback.onFailure("Server Error: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                handleNetworkFailure(t, callback);
-            }
-        });
-    }
-
-    public void login(String email, String password, ApiCallback<AuthResponse> callback) {
-        apiService.login(email, password).enqueue(new Callback<AuthResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    AuthResponse auth = response.body();
-                    if ("success".equalsIgnoreCase(auth.getStatus())) {
-                        callback.onSuccess(auth);
-                    } else {
-                        callback.onFailure(auth.getMessage() != null ? auth.getMessage() : "Login failed.");
-                    }
-                } else {
-                    callback.onFailure("Server Error: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                handleNetworkFailure(t, callback);
-            }
-        });
-    }
-
     // --- Products catalog ---
 
-    public void getFoods(ApiCallback<List<Food>> callback) {
-        apiService.getProducts().enqueue(new Callback<ProductResponse>() {
+    public void getFoods(final ApiCallback<List<Food>> callback) {
+        apiService.getProducts().enqueue(new Callback<List<Food>>() {
             @Override
-            public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
+            public void onResponse(@NonNull Call<List<Food>> call, @NonNull Response<List<Food>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Food> foods = new ArrayList<>();
-                    if (response.body().products != null) {
-                        for (ProductDto dto : response.body().products) {
-                            if (dto != null) {
-                                foods.add(mapToFood(dto));
-                            }
-                        }
-                    }
-                    callback.onSuccess(foods);
+                    callback.onSuccess(response.body());
                 } else {
                     callback.onFailure("Failed to load catalog: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ProductResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<Food>> call, @NonNull Throwable t) {
                 handleNetworkFailure(t, callback);
             }
         });
     }
 
-    public void getFoodById(String foodId, ApiCallback<Food> callback) {
-        getFoods(new ApiCallback<List<Food>>() {
+    public void getFoodById(String foodId, final ApiCallback<Food> callback) {
+        apiService.getProductById(foodId).enqueue(new Callback<Food>() {
             @Override
-            public void onSuccess(List<Food> result) {
-                if (result != null) {
-                    for (Food food : result) {
-                        if (food != null && food.getId() != null && food.getId().equalsIgnoreCase(foodId)) {
-                            callback.onSuccess(food);
-                            return;
-                        }
-                    }
+            public void onResponse(@NonNull Call<Food> call, @NonNull Response<Food> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Food details not found.");
                 }
-                callback.onFailure("Food details not found.");
             }
 
             @Override
-            public void onFailure(String errorMessage) {
-                callback.onFailure(errorMessage);
+            public void onFailure(@NonNull Call<Food> call, @NonNull Throwable t) {
+                handleNetworkFailure(t, callback);
             }
         });
     }
 
-    // --- Cart operations ---
+    // --- User Auth ---
 
-    public void getCart(String userId, ApiCallback<List<CartItem>> callback) {
-        apiService.getCart(userId).enqueue(new Callback<CartResponse>() {
+    public void registerUser(String name, String email, String password, final ApiCallback<User> callback) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+
+        apiService.registerUser(user).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<CartResponse> call, @NonNull Response<CartResponse> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    CartResponse cart = response.body();
-                    if ("success".equalsIgnoreCase(cart.getStatus())) {
-                        callback.onSuccess(cart.getItems() != null ? cart.getItems() : new ArrayList<>());
-                    } else {
-                        callback.onFailure(cart.getMessage() != null ? cart.getMessage() : "Failed to fetch cart.");
-                    }
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Registration failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                handleNetworkFailure(t, callback);
+            }
+        });
+    }
+
+    public void loginUser(String email, String password, final ApiCallback<User> callback) {
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+
+        apiService.loginUser(user).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Login failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                handleNetworkFailure(t, callback);
+            }
+        });
+    }
+
+    // --- User Profile ---
+
+    public void getUserProfile(String userId, final ApiCallback<User> callback) {
+        apiService.getUserProfile(userId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Failed to load profile: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                handleNetworkFailure(t, callback);
+            }
+        });
+    }
+
+    public void updateUserProfile(String userId, String name, final ApiCallback<User> callback) {
+        User user = new User();
+        user.setName(name);
+
+        apiService.updateUserProfile(userId, user).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Failed to update profile: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                handleNetworkFailure(t, callback);
+            }
+        });
+    }
+
+    public void uploadProfileImage(String userId, Uri fileUri, Context context, final ApiCallback<User> callback) {
+        File file = getFileFromUri(context, fileUri);
+        if (file == null) {
+            callback.onFailure("Failed to resolve image file path");
+            return;
+        }
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        apiService.uploadProfileImage(userId, body).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                try { file.delete(); } catch (Exception ignored) {}
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Failed to upload image: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                try { file.delete(); } catch (Exception ignored) {}
+                handleNetworkFailure(t, callback);
+            }
+        });
+    }
+
+    // --- Cart ---
+
+    public void getCart(String userId, final ApiCallback<List<CartItem>> callback) {
+        apiService.getCartItems(userId).enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<CartItem>> call, @NonNull Response<List<CartItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
                 } else {
                     callback.onFailure("Failed to fetch cart: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<CartResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<CartItem>> call, @NonNull Throwable t) {
                 handleNetworkFailure(t, callback);
             }
         });
     }
 
-    public void syncCart(String userId, List<CartItem> items, ApiCallback<GenericResponse> callback) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("items", items);
-
-        apiService.syncCart(userId, body).enqueue(new Callback<GenericResponse>() {
+    public void syncCart(String userId, List<CartItem> cartItems, final ApiCallback<GenericResponse> callback) {
+        apiService.syncCart(userId, new CartSyncBody(cartItems)).enqueue(new Callback<GenericResponse>() {
             @Override
             public void onResponse(@NonNull Call<GenericResponse> call, @NonNull Response<GenericResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -206,44 +244,16 @@ public class Repository {
         });
     }
 
-    // --- Order checkout ---
+    // --- Orders ---
 
-    public void placeOrder(String userId, String totalPrice, ApiCallback<GenericResponse> callback) {
-        apiService.placeOrder(userId, totalPrice).enqueue(new Callback<GenericResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<GenericResponse> call, @NonNull Response<GenericResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    GenericResponse r = response.body();
-                    if ("success".equalsIgnoreCase(r.getStatus())) {
-                        callback.onSuccess(r);
-                    } else {
-                        callback.onFailure(r.getMessage() != null ? r.getMessage() : "Checkout failed.");
-                    }
-                } else {
-                    callback.onFailure("Checkout failed: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
-                handleNetworkFailure(t, callback);
-            }
-        });
-    }
-
-    public void getOrders(String userId, ApiCallback<List<Order>> callback) {
-        apiService.getOrders(userId).enqueue(new Callback<OrderResponse>() {
+    public void placeOrder(Order order, final ApiCallback<String> callback) {
+        apiService.placeOrder(order).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(@NonNull Call<OrderResponse> call, @NonNull Response<OrderResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    OrderResponse r = response.body();
-                    if ("success".equalsIgnoreCase(r.getStatus())) {
-                        callback.onSuccess(r.getOrders() != null ? r.getOrders() : new ArrayList<>());
-                    } else {
-                        callback.onFailure(r.getMessage() != null ? r.getMessage() : "Failed to load orders.");
-                    }
+                    callback.onSuccess(response.body().getOrderId());
                 } else {
-                    callback.onFailure("Failed to load orders: " + response.code());
+                    callback.onFailure("Failed to place order: " + response.code());
                 }
             }
 
@@ -254,81 +264,44 @@ public class Repository {
         });
     }
 
-    // --- Profile management ---
-
-    public void updateProfileName(String userId, String name, ApiCallback<GenericResponse> callback) {
-        apiService.updateProfileName(userId, name).enqueue(new Callback<GenericResponse>() {
+    public void getUserOrders(String userId, final ApiCallback<List<Order>> callback) {
+        apiService.getUserOrders(userId).enqueue(new Callback<List<Order>>() {
             @Override
-            public void onResponse(@NonNull Call<GenericResponse> call, @NonNull Response<GenericResponse> response) {
+            public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onFailure("Failed to update profile name: " + response.code());
+                    callback.onFailure("Failed to load orders: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<Order>> call, @NonNull Throwable t) {
                 handleNetworkFailure(t, callback);
             }
         });
     }
 
-    public void uploadAvatar(String userId, File imageFile, ApiCallback<AuthResponse> callback) {
-        if (userId == null || imageFile == null) {
-            callback.onFailure("Invalid parameters for upload.");
-            return;
+    // --- File Utility ---
+
+    private File getFileFromUri(Context context, Uri uri) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            if (inputStream == null) return null;
+            File tempFile = new File(context.getCacheDir(), "temp_avatar_" + System.currentTimeMillis() + ".jpg");
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+            return tempFile;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting file from Uri: " + e.getMessage(), e);
+            return null;
         }
-
-        RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), userId);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
-
-        apiService.uploadAvatar(userIdBody, body).enqueue(new Callback<AuthResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    AuthResponse auth = response.body();
-                    if ("success".equalsIgnoreCase(auth.getStatus())) {
-                        callback.onSuccess(auth);
-                    } else {
-                        callback.onFailure(auth.getMessage() != null ? auth.getMessage() : "Upload failed.");
-                    }
-                } else {
-                    callback.onFailure("Upload failed: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                handleNetworkFailure(t, callback);
-            }
-        });
-    }
-
-    /**
-     * Maps a ProductDto (raw API data) to a Food model (app UI data).
-     */
-    public Food mapToFood(ProductDto dto) {
-        Food food = new Food();
-        food.setId(String.valueOf(dto.id));
-        food.setName(dto.title != null ? dto.title : "Unknown Food");
-        food.setDescription(dto.description != null ? dto.description : "");
-        food.setImageUrl(dto.thumbnail);
-        
-        // Price conversion logic
-        int inrPrice = (int) Math.round(dto.price * 15);
-        if (inrPrice < 80) inrPrice = 99;
-        if (inrPrice > 499) inrPrice = 299;
-        food.setPrice("₹" + inrPrice);
-        
-        double rating = dto.rating;
-        if (rating > 5.0 || rating < 0) rating = 4.2;
-        food.setRating(String.format(java.util.Locale.US, "%.1f", rating));
-        
-        int deliveryMinutes = 15 + (dto.id % 25);
-        food.setDeliveryTime(deliveryMinutes + " min");
-        
-        return food;
     }
 }

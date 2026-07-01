@@ -73,6 +73,7 @@
 
     <!-- Main Scrolling Body -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollHome"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -208,16 +209,50 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Cart Page Content Inclusions -->
+    <include
+        android:id="@+id/layoutCart"
+        layout="@layout/layout_cart_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
+    <!-- Orders Page Content Inclusions -->
+    <include
+        android:id="@+id/layoutOrders"
+        layout="@layout/layout_orders_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
+    <!-- Profile Page Content Inclusions -->
+    <include
+        android:id="@+id/layoutProfile"
+        layout="@layout/layout_profile_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@color/white"
-        app:elevation="12dp"
+        android:layout_height="64dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_floating_navbar"
+        app:backgroundTint="@null"
+        app:elevation="8dp"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/nav_item_color"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@style/App.ActiveIndicator"
+        app:itemRippleColor="@color/accentLightSelected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
