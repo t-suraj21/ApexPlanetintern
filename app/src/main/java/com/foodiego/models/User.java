@@ -11,6 +11,8 @@ public class User implements Serializable {
     private String email;
     private String profileImage;
     private String password;
+    private String phone;
+    private String address;
 
     public User() {
     }
@@ -20,6 +22,16 @@ public class User implements Serializable {
         this.name = name;
         this.email = email;
         this.profileImage = profileImage;
+    }
+
+    public User(String userId, String name, String email, String profileImage, String password, String phone, String address) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.password = password;
+        this.phone = phone;
+        this.address = address;
     }
 
     public String getUserId() {
@@ -60,5 +72,21 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

@@ -7,7 +7,7 @@ const multer = require('multer');
 const { User, Cart, Order, Food } = require('./models');
 
 const app = express();
-const PORT = 5001;
+const PORT = 8001;
 
 app.use(cors());
 app.use(express.json());
@@ -48,6 +48,7 @@ function generateId() {
 
 // --- Seeding Default Foods Catalog ---
 async function seedFoods() {
+  await Food.deleteMany({}); // Ensure clean re-seed with updated properties
   const count = await Food.countDocuments();
   if (count === 0) {
     const defaultFoods = [
@@ -58,7 +59,12 @@ async function seedFoods() {
         price: "₹349",
         imageUrl: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500&auto=format&fit=crop&q=60",
         rating: "4.7",
-        deliveryTime: "25 min"
+        deliveryTime: "25 min",
+        category: "Pizza",
+        restaurant: "Pizza Palace",
+        isVeg: false,
+        isPopular: true,
+        timestamp: Date.now() - 3600000 * 24 * 5
       },
       {
         id: "2",
@@ -67,7 +73,12 @@ async function seedFoods() {
         price: "₹189",
         imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format&fit=crop&q=60",
         rating: "4.5",
-        deliveryTime: "20 min"
+        deliveryTime: "20 min",
+        category: "Burger",
+        restaurant: "Burger Point",
+        isVeg: false,
+        isPopular: true,
+        timestamp: Date.now() - 3600000 * 24 * 3
       },
       {
         id: "3",
@@ -76,7 +87,12 @@ async function seedFoods() {
         price: "₹249",
         imageUrl: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=500&auto=format&fit=crop&q=60",
         rating: "4.3",
-        deliveryTime: "30 min"
+        deliveryTime: "30 min",
+        category: "Pasta",
+        restaurant: "Pasta Corner",
+        isVeg: true,
+        isPopular: false,
+        timestamp: Date.now() - 3600000 * 24 * 2
       },
       {
         id: "4",
@@ -85,7 +101,12 @@ async function seedFoods() {
         price: "₹149",
         imageUrl: "https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=500&auto=format&fit=crop&q=60",
         rating: "4.2",
-        deliveryTime: "15 min"
+        deliveryTime: "15 min",
+        category: "Sandwich",
+        restaurant: "Sandwich Club",
+        isVeg: false,
+        isPopular: false,
+        timestamp: Date.now() - 3600000 * 24 * 10
       },
       {
         id: "5",
@@ -94,7 +115,12 @@ async function seedFoods() {
         price: "₹99",
         imageUrl: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500&auto=format&fit=crop&q=60",
         rating: "4.6",
-        deliveryTime: "10 min"
+        deliveryTime: "10 min",
+        category: "Drinks",
+        restaurant: "Cafe Delight",
+        isVeg: true,
+        isPopular: true,
+        timestamp: Date.now() - 3600000 * 24
       },
       {
         id: "6",
@@ -103,7 +129,12 @@ async function seedFoods() {
         price: "₹129",
         imageUrl: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&auto=format&fit=crop&q=60",
         rating: "4.8",
-        deliveryTime: "12 min"
+        deliveryTime: "12 min",
+        category: "Desserts",
+        restaurant: "Sweet Treats",
+        isVeg: true,
+        isPopular: true,
+        timestamp: Date.now()
       }
     ];
     await Food.insertMany(defaultFoods);
@@ -144,7 +175,7 @@ app.post('/api/auth/register', async (req, res) => {
     const userId = generateId();
     const newUser = new User({ userId, name, email, password });
     await newUser.save();
-    
+
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -176,13 +207,13 @@ app.get('/api/users/:userId', async (req, res) => {
   }
 });
 
-// 6. Update User Profile Name
+// 6. Update User Profile Details
 app.put('/api/users/:userId', async (req, res) => {
-  const { name } = req.body;
+  const { name, phone, address } = req.body;
   try {
     const user = await User.findOneAndUpdate(
       { userId: req.params.userId },
-      { name },
+      { name, phone, address },
       { new: true }
     );
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -196,18 +227,18 @@ app.put('/api/users/:userId', async (req, res) => {
 app.post('/api/users/:userId/avatar', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    
+
     // Construct local public accessible server URL
     const host = req.get('host');
     const avatarUrl = `${req.protocol}://${host}/uploads/${req.file.filename}`;
-    
+
     const user = await User.findOneAndUpdate(
       { userId: req.params.userId },
       { profileImage: avatarUrl },
       { new: true }
     );
     if (!user) return res.status(404).json({ message: 'User not found' });
-    
+
     res.json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -253,10 +284,10 @@ app.post('/api/orders', async (req, res) => {
       status: 'Pending'
     });
     await newOrder.save();
-    
+
     // Clear user cart upon successful order placement
     await Cart.findOneAndUpdate({ userId }, { items: [] });
-    
+
     // Return order ID wrapped in a JSON object for standard client parsing
     res.status(201).json({ orderId });
   } catch (err) {

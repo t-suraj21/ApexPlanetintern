@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if the request belongs to the authenticated user
+    function isUserOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read, write: if isUserOwner(userId);
+      
+      // Addresses collection under user
+      match /addresses/{addressId} {
+        allow read, write: if isUserOwner(userId);
+      }
+      
+      // Favorites collection under user
+      match /favorites/{favId} {
+        allow read, write: if isUserOwner(userId);
+      }
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if false; // Orders cannot be deleted
+    }
+
+    // General fallback
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

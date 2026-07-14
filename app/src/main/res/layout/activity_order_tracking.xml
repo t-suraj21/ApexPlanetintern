@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgLight"
+    tools:context=".activities.OrderTrackingActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarTracking"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryColor"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="16dp"
+            tools:ignore="RtlSymmetry">
+
+            <TextView
+                android:id="@+id/btnTrackingBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="←"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Track Order 🚴"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnTrackingBack" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Main Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbarTracking"
+        app:layout_constraintBottom_toTopOf="@id/btnSimulateNext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:gravity="center_horizontal">
+
+            <!-- Lottie Animation view -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieTracking"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:contentDescription="Tracking Status Animation"
+                android:layout_marginTop="16dp" />
+
+            <!-- Order info card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/grayBorder"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/txtTrackingOrderId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Order ID: #F48A91"
+                        android:textColor="@color/textDark"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtEstimatedTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Estimated Delivery: 25 mins"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grayBorder"
+                        android:layout_marginVertical="16dp" />
+
+                    <!-- Steps Timeline -->
+                    <!-- Step 1: Placed -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/indicatorPlaced"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:text="✓"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:background="@drawable/bg_step_completed" />
+
+                        <TextView
+                            android:id="@+id/txtStepPlaced"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Order Placed"
+                            android:textColor="@color/textDark"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Divider Line 1 -->
+                    <View
+                        android:id="@+id/linePlacedToPrep"
+                        android:layout_width="2dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="11dp"
+                        android:background="@color/grayBorder" />
+
+                    <!-- Step 2: Preparing -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/indicatorPrep"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:text="2"
+                            android:textColor="@color/textGray"
+                            android:textSize="12sp"
+                            android:background="@drawable/bg_step_pending" />
+
+                        <TextView
+                            android:id="@+id/txtStepPrep"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Preparing Your Meal"
+                            android:textColor="@color/textGray"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <!-- Divider Line 2 -->
+                    <View
+                        android:id="@+id/linePrepToDelivery"
+                        android:layout_width="2dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="11dp"
+                        android:background="@color/grayBorder" />
+
+                    <!-- Step 3: Out for Delivery -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/indicatorDelivery"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:text="3"
+                            android:textColor="@color/textGray"
+                            android:textSize="12sp"
+                            android:background="@drawable/bg_step_pending" />
+
+                        <TextView
+                            android:id="@+id/txtStepDelivery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Out for Delivery"
+                            android:textColor="@color/textGray"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <!-- Divider Line 3 -->
+                    <View
+                        android:id="@+id/lineDeliveryToDelivered"
+                        android:layout_width="2dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="11dp"
+                        android:background="@color/grayBorder" />
+
+                    <!-- Step 4: Delivered -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/indicatorDelivered"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:text="4"
+                            android:textColor="@color/textGray"
+                            android:textSize="12sp"
+                            android:background="@drawable/bg_step_pending" />
+
+                        <TextView
+                            android:id="@+id/txtStepDelivered"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Delivered"
+                            android:textColor="@color/textGray"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Simulator button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSimulateNext"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:text="Advance Status (Simulate FCM)"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/secondaryColor"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

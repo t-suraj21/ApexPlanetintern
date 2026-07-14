@@ -8,7 +8,12 @@ const FoodSchema = new mongoose.Schema({
   price: { type: String, required: true },
   imageUrl: { type: String, default: "" },
   rating: { type: String, default: "4.0" },
-  deliveryTime: { type: String, default: "30 min" }
+  deliveryTime: { type: String, default: "30 min" },
+  category: { type: String, default: "General" },
+  restaurant: { type: String, default: "FoodieGo Kitchen" },
+  isVeg: { type: Boolean, default: true },
+  isPopular: { type: Boolean, default: false },
+  timestamp: { type: Number, default: Date.now }
 });
 
 // User profile schema
@@ -17,7 +22,9 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  profileImage: { type: String, default: "" }
+  profileImage: { type: String, default: "" },
+  phone: { type: String, default: "" },
+  address: { type: String, default: "" }
 });
 
 // Cart item schema

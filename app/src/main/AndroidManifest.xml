@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permissions needed to download dummy food images using Glide -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -25,33 +25,61 @@
             </intent-filter>
         </activity>
 
-        <!-- Login Screen Activity -->
+        <!-- Login & Registration -->
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.FoodieGo.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Register Screen Activity -->
         <activity
             android:name=".activities.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.FoodieGo.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Home Screen Activity -->
+        <!-- Main Features -->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false"
             android:theme="@style/Theme.FoodieGo.NoActionBar" />
 
-        <!-- Food Details Screen Activity -->
         <activity
             android:name=".activities.FoodDetailsActivity"
             android:exported="false"
             android:theme="@style/Theme.FoodieGo.NoActionBar" />
 
+        <activity
+            android:name=".activities.CartActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FoodieGo.NoActionBar" />
 
+        <activity
+            android:name=".activities.OrdersActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FoodieGo.NoActionBar" />
+
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FoodieGo.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+
+        <!-- Supplementary Activities -->
+        <activity android:name=".activities.SettingsActivity" android:theme="@style/Theme.FoodieGo.NoActionBar" />
+        <activity android:name=".activities.FavoritesActivity" android:theme="@style/Theme.FoodieGo.NoActionBar" />
+        <activity android:name=".activities.AddressActivity" android:theme="@style/Theme.FoodieGo.NoActionBar" />
+        <activity android:name=".activities.CheckoutActivity" android:theme="@style/Theme.FoodieGo.NoActionBar" />
+        <activity android:name=".activities.OrderTrackingActivity" android:theme="@style/Theme.FoodieGo.NoActionBar" />
+
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name=".services.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
     </application>
 

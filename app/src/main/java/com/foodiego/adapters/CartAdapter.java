@@ -1,6 +1,5 @@
 package com.foodiego.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -10,26 +9,28 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.foodiego.R;
 import com.foodiego.databinding.ItemCartFoodBinding;
+import com.foodiego.firebase.AuthManager;
+import com.foodiego.firebase.FirestoreManager;
 import com.foodiego.models.CartItem;
 
 import java.util.List;
 
 /**
  * Adapter for the Cart Items RecyclerView.
- * Utilizes dynamic getAdapterPosition() for crash-free item updates and removals.
+ * Automatically syncs quantity changes and removals with Firebase Firestore.
  */
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
     private final List<CartItem> cartItemList;
-    private final OnCartQuantityChangeListener quantityChangeListener;
+    private final OnCartChangeListener listener;
 
-    public interface OnCartQuantityChangeListener {
-        void onQuantityChanged(List<CartItem> updatedList);
+    public interface OnCartChangeListener {
+        void onChanged(List<CartItem> updatedList);
     }
 
-    public CartAdapter(List<CartItem> cartItemList, OnCartQuantityChangeListener listener) {
+    public CartAdapter(List<CartItem> cartItemList, OnCartChangeListener listener) {
         this.cartItemList = cartItemList;
-        this.quantityChangeListener = listener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -63,10 +64,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             binding.txtCartFoodPrice.setText(cartItem.getFood().getPrice());
             binding.txtCartQuantity.setText(String.valueOf(cartItem.getQuantity()));
 
-            Context context = itemView.getContext();
-
-            // Load Image
-            Glide.with(context)
+            Glide.with(itemView.getContext())
                     .load(cartItem.getFood().getImageUrl())
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_foodiego_logo)
@@ -74,42 +72,46 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .centerCrop()
                     .into(binding.imgCartFood);
 
-            // Plus Action Click Handler
-            binding.btnCartPlus.setOnClickListener(v -> {
-                int adapterPos = getAdapterPosition();
-                if (adapterPos == RecyclerView.NO_POSITION) return;
+            binding.btnCartPlus.setOnClickListener(v -> updateQuantity(cartItem, 1));
+            binding.btnCartMinus.setOnClickListener(v -> updateQuantity(cartItem, -1));
+        }
 
-                CartItem item = cartItemList.get(adapterPos);
-                int currentQty = item.getQuantity();
-                item.setQuantity(currentQty + 1);
-                binding.txtCartQuantity.setText(String.valueOf(item.getQuantity()));
+        private void updateQuantity(CartItem item, int change) {
+            String userId = AuthManager.getInstance().getCurrentUserId();
+            if (userId == null) return;
 
-                if (quantityChangeListener != null) {
-                    quantityChangeListener.onQuantityChanged(cartItemList);
-                }
-            });
+            int newQty = item.getQuantity() + change;
 
-            // Minus Action Click Handler
-            binding.btnCartMinus.setOnClickListener(v -> {
-                int adapterPos = getAdapterPosition();
-                if (adapterPos == RecyclerView.NO_POSITION) return;
+            if (newQty <= 0) {
+                FirestoreManager.getInstance().removeFromCart(userId, item.getFoodId(), new FirestoreManager.FirestoreCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        int pos = getAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            cartItemList.remove(pos);
+                            notifyItemRemoved(pos);
+                            if (listener != null) listener.onChanged(cartItemList);
+                        }
+                    }
 
-                CartItem item = cartItemList.get(adapterPos);
-                int currentQty = item.getQuantity();
-                if (currentQty > 1) {
-                    item.setQuantity(currentQty - 1);
-                    binding.txtCartQuantity.setText(String.valueOf(item.getQuantity()));
-                } else {
-                    // Qty is 1, remove item from cart
-                    cartItemList.remove(adapterPos);
-                    notifyItemRemoved(adapterPos);
-                    notifyItemRangeChanged(adapterPos, cartItemList.size());
-                }
+                    @Override
+                    public void onFailure(String message) {}
+                });
+            } else {
+                item.setQuantity(newQty);
+                FirestoreManager.getInstance().addToCart(userId, item, new FirestoreManager.FirestoreCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        binding.txtCartQuantity.setText(String.valueOf(newQty));
+                        if (listener != null) listener.onChanged(cartItemList);
+                    }
 
-                if (quantityChangeListener != null) {
-                    quantityChangeListener.onQuantityChanged(cartItemList);
-                }
-            });
+                    @Override
+                    public void onFailure(String message) {
+                        item.setQuantity(item.getQuantity() - change);
+                    }
+                });
+            }
         }
     }
 }

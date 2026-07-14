@@ -1,34 +1,24 @@
 <resources xmlns:tools="http://schemas.microsoft.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.FoodieGo" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Primary brand color. -->
+    <style name="Theme.FoodieGo" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
         <item name="colorOnPrimary">@color/white</item>
-        
-        <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
         <item name="colorOnSecondary">@color/textDark</item>
-        
-        <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/primaryDarkColor</item>
-        
-        <!-- Window background color. -->
         <item name="android:windowBackground">@color/bgLight</item>
-        
-        <!-- Customize your theme here. -->
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
     </style>
 
-    <!-- Specific theme for fullscreen splash or layouts requiring seamless action bar removal -->
-    <style name="Theme.FoodieGo.NoActionBar">
+    <!-- Fullscreen Splash / No Action Bar Theme -->
+    <style name="Theme.FoodieGo.NoActionBar" parent="Theme.FoodieGo">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/primaryDarkColor</item>
     </style>
 
-    <!-- Active Indicator style for BottomNavigationView -->
     <style name="App.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/accentLight</item>
     </style>

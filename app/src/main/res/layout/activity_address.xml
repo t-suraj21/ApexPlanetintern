@@ -4,11 +4,12 @@
     xmlns:tools="http://tools.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgLight">
+    android:background="@color/bgLight"
+    tools:context=".activities.AddressActivity">
 
-    <!-- Custom Toolbar -->
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarOrders"
+        android:id="@+id/toolbarAddress"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primaryColor"
@@ -23,9 +24,8 @@
             android:paddingEnd="16dp"
             tools:ignore="RtlSymmetry">
 
-            <!-- Back Arrow -->
             <TextView
-                android:id="@+id/btnOrdersBack"
+                android:id="@+id/btnAddressBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="←"
@@ -38,84 +38,97 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="My Orders"
+                android:text="Address Book 📍"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/btnOrdersBack" />
+                app:layout_constraintStart_toEndOf="@id/btnAddressBack" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Orders List Recycler -->
+    <!-- Address Recycler View -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOrders"
+        android:id="@+id/rvAddresses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:padding="12dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/toolbarOrders"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_order" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarAddress"
+        app:layout_constraintBottom_toTopOf="@id/btnAddAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Empty State Layout -->
+    <!-- Progress Indicator -->
+    <ProgressBar
+        android:id="@+id/progressAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/primaryColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Empty State -->
     <LinearLayout
-        android:id="@+id/layoutEmptyOrders"
+        android:id="@+id/layoutEmptyAddress"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
         android:padding="32dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/toolbarOrders"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieEmptyOrders"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            android:contentDescription="No Orders Animation" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍"
+            android:textSize="50sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="No orders placed yet!"
+            android:text="No Addresses Saved"
             android:textColor="@color/textDark"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-bold" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Order delicious food items and track your delivery details here."
+            android:text="Add your delivery address to start ordering."
             android:textColor="@color/textGray"
             android:textSize="14sp"
-            android:gravity="center"
-            android:fontFamily="sans-serif" />
-
+            android:gravity="center" />
     </LinearLayout>
 
-    <!-- Progress Indicator -->
-    <ProgressBar
-        android:id="@+id/progressOrders"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminateTint="@color/primaryColor"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+    <!-- Add New Address Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddAddress"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:text="+ Add New Address"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/primaryColor"
+        app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
