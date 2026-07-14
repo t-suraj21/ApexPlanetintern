@@ -156,7 +156,10 @@ public class HomeActivity extends AppCompatActivity {
     // --- Home Logic (Search & Filtering) ---
     private void setupHome() {
         binding.imgToolbarProfile.setOnClickListener(v -> switchTab(R.id.nav_profile));
-        binding.imgToolbarNotification.setOnClickListener(v -> startActivity(new Intent(this, FavoritesActivity.class)));
+        binding.imgToolbarNotification.setOnClickListener(v -> {
+            NotificationsBottomSheet sheet = NotificationsBottomSheet.newInstance();
+            sheet.show(getSupportFragmentManager(), "NotificationsBottomSheet");
+        });
 
         List<Category> categories = new ArrayList<>();
         categories.add(new Category("Pizza", R.drawable.ic_pizza));
@@ -587,6 +590,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.layoutProfile.layoutLogout.setOnClickListener(v -> handleLogout());
 
         binding.layoutProfile.cardProfileAddresses.setOnClickListener(v -> startActivity(new Intent(this, AddressActivity.class)));
+        binding.layoutProfile.cardProfileFavorites.setOnClickListener(v -> startActivity(new Intent(this, FavoritesActivity.class)));
         binding.layoutProfile.cardProfileSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 

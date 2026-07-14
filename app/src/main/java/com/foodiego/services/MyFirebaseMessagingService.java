@@ -67,6 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     public static void displayNotification(Context context, String title, String body) {
         createNotificationChannel(context);
+        com.foodiego.utils.NotificationHelper.saveNotification(context, title, body);
 
         Intent intent = new Intent(context, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

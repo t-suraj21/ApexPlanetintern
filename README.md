@@ -1,66 +1,44 @@
-# FoodieGo 🍔 - Task 2: UI/UX Design & Implementation
+# FoodieGo 🍔 - Food Ordering Android Application
 
-FoodieGo is a professional food ordering Android application built using **Java + XML** in **Android Studio**. This repository contains the complete codebase for **Android Development Internship Task 2**, transforming the application into a highly premium, production-quality food delivery app with styling and flows similar to Zomato, Swiggy, and Uber Eats.
-
----
-
-## 📱 Features & Screens
-
-### 1. Splash Screen
-*   **Visual Style:** Coral-to-Amber linear diagonal gradient background.
-*   **Launcher Logo:** Displays a serving cloche (plate lid) vector logo with steam waves and fast-delivery indicators.
-*   **Transition:** Automatically redirects to the Login screen after a precise **2-second delay** with smooth fade animations.
-
-### 2. Login & Forgot Password Screen
-*   **Outlined Inputs:** Modern rounded outlined `TextInputLayout` containers with floating icons and validation-ready fields.
-*   **Forgot Password Link:** Embedded "Forgot Password?" clickable text link displaying interactive toast confirmations.
-*   **Micro-Animations:** Programmatic button scaling (scale down on touch down, scale up on release) providing rich tactile feedback.
-*   **Input Validation:** Email syntax checking (standard regex format matching) and password length checking (minimum 6 characters).
-
-### 3. Register Screen
-*   **Comprehensive Capture:** Gathers Full Name, Email, Password, and Confirm Password inside a unified card layout.
-*   **Form Validation:** Checks name length (minimum 3 characters), email formatting, password strength, and performs a matching check on "Confirm Password".
-*   **Navigation Stack Control:** Automatically clears background task stacks on Home launch (`finishAffinity()`) to prevent standard hardware back navigations from landing on login sheets.
-
-### 4. Home Screen Dashboard
-*   **Toolbar Headings:** Custom top bar displaying greeting banners ("Hello, Rahul 👋"), tagline prompts, and notification vectors.
-*   **Responsive Search Bar:** Rounded solid white mock input bar (`@drawable/bg_search_bar`) displaying active search vector icons.
-*   **Horizontal Categories List:**
-    *   Horizontal scroll area populated with Pizza, Burger, Pasta, Sandwich, Drinks, and Dessert categories.
-    *   Dynamic selected highlights: tapping a category dynamically updates and fills cards with warm primary orange overlays.
-*   **Horizontal Popular Foods List:**
-    *   Displays high-rating food items, delivery duration text (⏱), and circular star ratings (★).
-    *   Tapping cards triggers sliding transitions to open the Food Details page.
-*   **Vertical Recommended Foods List:**
-    *   Displays 10 rich local food products with descriptions, Unsplash photographic thumbnails loaded via Glide, and active add actions.
-
-### 5. Collapsible Food Details Screen
-*   **collapsing Image Header:** Large Unsplash product photography with custom back chevron overlays.
-*   **Product Information Panel:** Renders food names, price lines, green ratings tags, and descriptions.
-*   **Quantity Picker Panel:** A horizontal click counter allowing users to increase or decrease quantities (+ / -) locally.
-*   **Primary Action:** A solid button triggering adding the product and selected quantity to the local shopping cart.
-
-### 6. Dynamic Cart Screen
-*   **Item Listing Recycler:** Displays all added products with Unsplash thumbnails, price labels, and quantity controls.
-*   **Real-time Quantity Controls:** Tap `+` or `-` inside the cart to adjust counts. If counts drop to 0, the item is dynamically removed from the list.
-*   **Bill Details Breakdown:** Sums item subtotals, restaurant taxes (₹18), and delivery charges (₹30), refreshing billing Pay cards in real time.
-*   **Empty State Layout:** Displays a stylized empty checkout vector and browse redirects when the cart is cleared.
+FoodieGo is a professional, production-grade food ordering Android application built using **Java + XML** in **Android Studio**. This repository contains the finalized codebase for the **Android Development Internship Project**, delivering a premium user experience styled similarly to modern food delivery platforms like Zomato, Swiggy, and Uber Eats.
 
 ---
 
-## 🛠️ Tech Stack & Design Tokens
+## 📱 Features & Components
 
-*   **Language:** Java (JDK 8 / VERSION_1_8 compatibility)
-*   **Layout Engine:** XML Layouts (ConstraintLayout, LinearLayout, ScrollView, NestedScrollView)
-*   **UI System:** Material Design 3 Guidelines (`com.google.android.material`)
-*   **Image Processing:** Glide (v4.16.0)
-*   **List Rendering:** RecyclerView (Categories, Popular Foods, Recommended Foods, Cart Items)
-*   **Pattern Architecture:** Android ViewBinding (100% type-safe views loading)
-*   **Primary Color (Coral Orange):** `#FF6B35`
-*   **Secondary Color (Amber Gold):** `#FF9F1C`
-*   **Background (Soft warm off-white):** `#F8F9FA`
-*   **Text (Slate black):** `#212529`
-*   **Accent Red:** `#FF4D4D`
+### 1. In-App Notifications 🔔 [NEW]
+*   **Notifications Log**: Tapping the notification bell launches a custom-built, modern `NotificationsBottomSheet` displaying all active system and simulated push alerts.
+*   **Auto-Formatting**: Displays real-time elapsed timestamps (e.g., "Just now", "5 minutes ago", "2 hours ago").
+*   **Log Purge**: Includes an option to clear notification logs dynamically.
+
+### 2. Localization & Dark Mode [NEW]
+*   **Hindi Localization**: Complete language switching support. When the user changes settings to Hindi, the app interface instantly updates with translated Hindi strings (`values-hi`).
+*   **Sleek Night Theme**: Added premium dark mode styling (`values-night`), mapping backgrounds, texts, and borders to slate colors for maximum legibility.
+
+### 3. Splash Screen
+*   **Visual Style**: Coral-to-Amber linear diagonal gradient background.
+*   **Launcher Logo**: Gourmet serving cloche vector logo with steam waves and fast-delivery motion indicators.
+*   **Automatic Transition**: Redirects to Login/Home after a precise **2-second delay** with smooth fade transitions.
+
+### 4. Registration & Login Flow
+*   **Validation Checking**: Outlined `TextInputLayout` containers with floating icons, email regex checks, and password strength checks.
+*   **Scalable Buttons**: Programmatic touch-scaling feedback on primary action buttons.
+*   **Backstack Control**: Calls `finishAffinity()` on Home redirection to prevent backward navigation loops.
+
+### 5. Home Dashboard
+*   **Dashboard Filtering**: Active chip tags (Veg-Only, Popular, Fast Delivery, Price Ranks, Ratings) instantly update and filter item adapters.
+*   **Horizontal Categories**: Categories (Pizza, Burger, Pasta, Sandwich, Drinks, Dessert) update primary highlights dynamically on selection.
+*   **Double-Row Food Catalog**: Separate sections for Popular food choices (horizontal) and Recommended food listings (vertical scroll).
+
+### 6. Food Details & Dynamic Cart
+*   **Collapsible Images**: Clean collapsing details header using Unsplash photographs.
+*   **Static Cart Singleton**: `CartManager` coordinates add/remove adjustments, billing sum values, and delivery charges.
+*   **Bill Breakdown**: Subtotals, CGST restaurant taxes (₹18), and delivery charges (₹30) refresh cart payment panels in real-time.
+
+### 7. Timeline Order Tracking
+*   **Steppers Stepping**: Visual tracker timeline tracing active order stages:
+    `Placed ➔ Preparing ➔ Out for Delivery ➔ Delivered`
+*   **Status Simulator**: Simulated status steps that dispatch corresponding local notifications.
 
 ---
 
@@ -70,75 +48,108 @@ FoodieGo is a professional food ordering Android application built using **Java 
 com.foodiego
 │
 ├── activities
-│   ├── SplashActivity.java       # Automatic 2s transition timer
-│   ├── LoginActivity.java        # Email/Password validation, forgot password
-│   ├── RegisterActivity.java     # Full name, email, confirm password match
-│   ├── HomeActivity.java         # Main dashboard, BottomNavigationView listener
-│   ├── FoodDetailsActivity.java  # Collaborated details viewer, item counters
-│   └── CartActivity.java         # Scroll items list, real-time bill calculations
+│   ├── AddressActivity.java         # Add, edit, remove delivery address
+│   ├── CheckoutActivity.java        # Form inputs validation, bill sums, pay card forms
+│   ├── FavoritesActivity.java       # User favorite food item lists
+│   ├── FoodDetailsActivity.java     # Image viewer header, quantity local counter
+│   ├── HomeActivity.java            # BottomNavigationView tab controller (Home, Cart, Orders, Profile)
+│   ├── LoginActivity.java           # Authentication, text checkers
+│   ├── NotificationsBottomSheet.java# Bottom sheet displaying logged user notifications
+│   ├── OrderTrackingActivity.java   # Stepper progress timeline tracking
+│   ├── RegisterActivity.java        # Registration forms cards
+│   ├── SettingsActivity.java        # Language switcher, night theme switches, policy info
+│   └── SplashActivity.java          # 2s delay diagnostic loader
 │
 ├── adapters
-│   ├── CategoryAdapter.java      # Horizontal category list with selections
-│   ├── PopularFoodAdapter.java   # Horizontal popular foods list with intent links
-│   ├── RecommendedFoodAdapter.java # Vertical recommended foods card list
-│   └── CartAdapter.java          # Cart items list, count triggers, item removals
+│   ├── AddressAdapter.java          # List address cards
+│   ├── CartAdapter.java             # Quantity +/- controls and removals
+│   ├── CategoryAdapter.java         # Category items highlights
+│   ├── FoodAdapter.java             # Food lists
+│   ├── OrderAdapter.java            # Order lists
+│   ├── PopularFoodAdapter.java      # Popular food cards
+│   └── RecommendedFoodAdapter.java  # Vertical recommended items recycler
+│
+├── firebase
+│   ├── AuthManager.java             # FirebaseAuth bindings
+│   ├── FirebaseHelper.java          # Profile images upload, firestore favorites
+│   └── FirestoreManager.java        # User collections CRUD operations
 │
 ├── models
-│   ├── Food.java                 # Food object (rating, deliveryTime, price)
-│   ├── Category.java             # Category object (name, iconResId)
-│   └── CartItem.java             # Cart selection object (food, quantity)
+│   ├── Address.java                 # Address model
+│   ├── CartItem.java                # Cart selection quantities model
+│   ├── Food.java                    # Food rating, delivery duration model
+│   ├── NotificationItem.java        # Saved notification message model
+│   ├── Order.java                   # Order status, totals model
+│   └── User.java                    # Profile details model
+│
+├── network
+│   ├── ApiService.java              # Retrofit routing paths interface
+│   ├── CartSyncBody.java            # Sync REST endpoints models
+│   ├── Repository.java              # REST API calls controller
+│   └── RetrofitClient.java          # OkHttp configurations
+│
+├── services
+│   └── MyFirebaseMessagingService.java# Firebase Cloud Messaging & notification channels
 │
 └── utils
-    └── CartManager.java          # Real-time static cart repository singleton
-```
-
-```text
-res
-│
-├── anim
-│   ├── slide_in_right.xml        # Slides transition in from right edge
-│   ├── slide_out_left.xml        # Slides transition out to left edge
-│   ├── slide_in_left.xml         # Slides back in from left edge
-│   └── slide_out_right.xml       # Slides back out to right edge
-│
-├── drawable
-│   ├── bg_splash_gradient.xml    # Diagonal linear primary gradient
-│   ├── bg_button_gradient.xml    # Rounded orange-to-gold button shape
-│   ├── bg_search_bar.xml         # White solid search layout with borders
-│   ├── bg_circle_icon.xml        # Soft circular category overlay
-│   ├── ic_foodiego_logo.xml      # Brand Vector Logo (Gourmet cloche & speed lines)
-│   ├── ic_home.xml               # Vector icon for bottom navigation (home)
-│   ├── ic_cart.xml               # Vector icon for bottom navigation (cart)
-│   ├── ic_orders.xml             # Vector icon for bottom navigation (orders)
-│   ├── ic_notification.xml        # Vector icon for toolbar notification alert
-│   ├── ic_pizza.xml / ic_burger.xml / ic_pasta.xml / ic_sandwich.xml / ic_drinks.xml / ic_dessert.xml
-│   └── ic_search.xml / ic_profile.xml
-│
-├── layout
-│   ├── activity_splash.xml       # Centered logo, name, tagline, loading overlay
-│   ├── activity_login.xml        # Outlined inputs with Forgot Password
-│   ├── activity_register.xml     # Registration card with multiple text fields
-│   ├── activity_home.xml         # Custom app bar, search bar, list headers, BottomNavigationView
-│   ├── activity_food_details.xml # COLLAPSING header image, descriptives, picker, Add button
-│   ├── activity_cart.xml         # Cart scroll recycler, bill panel, Place Order action
-│   ├── item_category.xml         # Category vertical rounded single card
-│   ├── item_popular_food.xml     # Popular horizontal layout card with badges
-│   ├── item_food.xml             # Recommended vertical card with Unsplash
-│   └── item_cart_food.xml        # Cart horizontal card with quantity indicators
-│
-└── values
-    ├── colors.xml                # M3 styling color codes
-    ├── strings.xml               # UI text labels
-    └── themes.xml                # Material NoActionBar themes
+    ├── CartManager.java             # Static cart repository singleton
+    ├── NotificationHelper.java      # SharedPreferences notifications logger
+    ├── OfflineCacheManager.java     # Local backup memory manager
+    └── SessionManager.java          # App login preferences
 ```
 
 ---
 
-## 🚀 Step-by-Step Setup Instructions
+## 🛠️ Step-by-Step Installation & Local Run
 
-To open, build, and run the FoodieGo project in **Android Studio**:
+### 1. Run Node.js API Backend
+Ensure you have **Node.js** and **MongoDB** installed and running on your host machine.
+```bash
+# Navigate to the API directory
+cd foodiego_api
 
-1.  **Open the Workspace**: Open Android Studio, click **Open** or **Import**, and select `/Users/surajkumar/Developer/Apexplanet`.
-2.  **Allow Gradle Sync**: Android Studio will automatically resolve references, download the **Glide** library, and complete the build.
-3.  **Compile & Run**: Ensure your AVD Emulator is started (or connect a debug phone), select `app` in the top bar, and click **Run** (or `Shift + F10`).
-4.  **Terminal Build Option**: Open the integrated terminal in Android Studio or VS Code and run `./gradlew assembleDebug` to compile and output `app-debug.apk`.
+# Install backend dependencies
+npm install
+
+# Start the REST API server (runs on port 8001)
+npm start
+```
+
+### 2. Configure Android SDK & Boot Emulator
+You can manage devices via Android Studio or compile directly using the terminal.
+```bash
+# Start your Android emulator (e.g. Pixel_9_Pro)
+android emulator start Pixel_9_Pro
+```
+
+### 3. Build & Run Android Application
+Run Gradle tasks to deploy the debug application.
+```bash
+# Verify device connection
+adb devices
+
+# Compile and install on running emulator
+./gradlew installDebug
+```
+
+---
+
+## 📦 Compiling Production Release Build
+
+To compile a signed production APK prepared for Google Play Store upload:
+```bash
+# Clean project build caches
+./gradlew clean
+
+# Compile signed Release APK
+./gradlew assembleRelease
+```
+The output signed APK `app-release.apk` is saved in:
+`app/build/outputs/apk/release/app-release.apk`
+
+---
+
+## 🔮 Future Scope
+*   **Live Map Tracking**: Integrate Google Maps API to visualize riders in real-time.
+*   **Payment Gateways**: Incorporate Razorpay or Stripe SDKs for live transactions.
+*   **Personalization**: Implement food recommendations using machine learning.

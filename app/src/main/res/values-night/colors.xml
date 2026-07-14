@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Task 2 Night Color Tokens (Premium Dark Food Theme) -->
+    <color name="primaryColor">#FF6B35</color>
+    <color name="primaryDarkColor">#121416</color>
+    <color name="primaryLightColor">#FFA07A</color>
+    <color name="secondaryColor">#FF9F1C</color>
+    <color name="secondaryDarkColor">#D48000</color>
+    <color name="secondaryLightColor">#FFAE33</color>
+    
+    <!-- UI Layout Color Tints (Dark Mode) -->
+    <color name="bgLight">#121416</color>
+    <color name="bgCard">#1B1E21</color>
+    <color name="textDark">#F8F9FA</color>
+    <color name="textGray">#ADB5BD</color>
+    <color name="accentRed">#FF4D4D</color>
+    
+    <!-- Selections & Interactive Tints -->
+    <color name="accentLight">#2D2522</color>
+    <color name="accentLightSelected">#3D2F2A</color>
+    <color name="grayBorder">#2C3034</color>
+    <color name="white">#1B1E21</color>
+    <color name="black">#FFFFFF</color>
+    <color name="red_validation">#E74C3C</color>
+</resources>

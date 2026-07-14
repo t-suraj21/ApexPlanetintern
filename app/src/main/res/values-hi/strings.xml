@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FoodieGo</string>
+    <string name="greeting_format">नमस्ते, %1$s 👋</string>
+    <string name="loading_foods">भोजन लोड हो रहा है...</string>
+
+    <!-- Splash Screen -->
+    <string name="tagline">आपका भोजन, तेजी से वितरित</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_back">वापसी पर स्वागत है!</string>
+    <string name="login_to_continue">अपनी भोजन यात्रा जारी रखने के लिए लॉगिन करें</string>
+    <string name="email_hint">ईमेल पता</string>
+    <string name="password_hint">पासवर्ड</string>
+    <string name="login_btn">लॉगिन</string>
+    <string name="dont_have_account">खाता नहीं है? </string>
+    <string name="register_here">यहाँ पंजीकरण करें</string>
+
+    <!-- Register Screen -->
+    <string name="create_account">खाता बनाएं</string>
+    <string name="register_to_start">अभी ऑर्डर करने के लिए पंजीकरण करें</string>
+    <string name="full_name_hint">पूरा नाम</string>
+    <string name="confirm_password_hint">पासवर्ड की पुष्टि करें</string>
+    <string name="register_btn">पंजीकरण करें</string>
+    <string name="already_have_account">पहले से ही एक खाता है? </string>
+    <string name="login_here">यहाँ लॉगिन करें</string>
+</resources>

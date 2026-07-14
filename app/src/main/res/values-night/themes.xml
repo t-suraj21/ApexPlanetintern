@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.microsoft.com/tools">
+    <!-- Base application theme for Night Mode. -->
+    <style name="Theme.FoodieGo" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/textDark</item>
+        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="android:windowBackground">@color/bgLight</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+    </style>
+
+    <!-- Fullscreen Splash / No Action Bar Theme -->
+    <style name="Theme.FoodieGo.NoActionBar" parent="Theme.FoodieGo">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+    </style>
+
+    <style name="App.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/accentLight</item>
+    </style>
+</resources>
